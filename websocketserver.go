@@ -1,10 +1,15 @@
 package kismet
 
 import (
+	"crypto/sha1"
+	"encoding/base64"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
 )
+
+const websocketGUID string = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
 
 type WebSocketServer struct {
 	config Config
@@ -21,7 +26,17 @@ func (s *WebSocketServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-// upgradeConnection attempts to upgrade an incoming HTTP request to the WebSocket protocol.
+// generateAcceptHeader returns the Base64-encoded SHA1 hash of the
+// Sec-Websocket-Key header and the WebSocket GUID.
+func (s *WebSocketServer) generateAcceptHeader(key string) string {
+	hash := sha1.New()
+	io.WriteString(hash, key)
+	io.WriteString(hash, websocketGUID)
+	return base64.StdEncoding.EncodeToString(hash.Sum(nil))
+}
+
+// upgradeConnection attempts to upgrade an incoming HTTP request to the
+// WebSocket protocol.
 func (s *WebSocketServer) upgradeConnection(w http.ResponseWriter, r *http.Request) {
 
 	// The WebSocket handshake is only supported by HTTP/1.1 or greater.
@@ -56,7 +71,7 @@ func (s *WebSocketServer) upgradeConnection(w http.ResponseWriter, r *http.Reque
 	connectionHeaders := strings.Split(r.Header.Get("Connection"), ", ")
 
 	// Firefox sends keep-alive with the Connection header, so it's necessary to
-	// check everything in the Connection headers to make sure Upgrade is included.
+	// check everything in the Connection header to make sure Upgrade is included.
 	if !sliceContainsString(connectionHeaders, "Upgrade") {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return

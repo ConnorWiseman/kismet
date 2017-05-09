@@ -60,4 +60,12 @@ func (s *WebSocketServer) upgradeConnection(w http.ResponseWriter, r *http.Reque
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
+
+  conn, buffer, err := w.(http.Hijacker).Hijack()
+  if err != nil {
+    http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+    return
+  }
+
+  defer conn.Close()
 }

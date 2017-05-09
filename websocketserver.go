@@ -5,7 +5,7 @@ import (
 )
 
 type WebSocketServer struct {
-  config Config
+	config Config
 }
 
 // NewWebSocketServer returns a new WebSocketServer.
@@ -15,5 +15,10 @@ func NewWebSocketServer(config Config) *WebSocketServer {
 
 // ServeHTTP ensures that WebSocketServer fulfills the http.Handler interface.
 func (s *WebSocketServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	return s.upgradeConnection(w, r)
+}
+
+// upgradeConnection attempts to upgrade an incoming HTTP request to the WebSocket protocol.
+func (s *WebSocketServer) upgradeConnection(w http.ResponseWriter, r *http.Request) {
 
 }

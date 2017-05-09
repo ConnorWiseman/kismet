@@ -3,6 +3,7 @@ package kismet
 import (
 	"crypto/sha1"
 	"encoding/base64"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -84,8 +85,14 @@ func (s *WebSocketServer) upgradeConnection(w http.ResponseWriter, r *http.Reque
 	}
 
 	socket := NewWebSocket(&conn, buffer)
-
 	accept := s.generateAcceptHeader(r.Header.Get("Sec-Websocket-Key"))
+
+	socket.buffer.WriteString("HTTP/1.1 101 Switching Protocols\r\n")
+	socket.buffer.WriteString("Upgrade: websocket\r\n")
+	socket.buffer.WriteString("Connection: Upgrade\r\n")
+	socket.buffer.WriteString(fmt.Sprintf("Sec-WebSocket-Accept: %s\r\n", accept))
+	socket.buffer.WriteString("\r\n\r\n")
+	socket.buffer.Flush()
 
 	defer conn.Close()
 }

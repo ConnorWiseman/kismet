@@ -94,5 +94,5 @@ func (s *WebSocketServer) upgradeConnection(w http.ResponseWriter, r *http.Reque
 	socket.buffer.WriteString("\r\n\r\n")
 	socket.buffer.Flush()
 
-	defer conn.Close()
+	defer socket.Close()
 }

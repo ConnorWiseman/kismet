@@ -14,3 +14,9 @@ type WebSocket struct {
 func NewWebSocket(conn *net.Conn, buffer *bufio.ReadWriter) *WebSocket {
 	return &WebSocket{conn, buffer}
 }
+
+// Close closes the WebSocket.
+func (w *WebSocket) Close() {
+
+	w.conn.Close()
+}

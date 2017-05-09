@@ -83,5 +83,9 @@ func (s *WebSocketServer) upgradeConnection(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	socket := NewWebSocket(&conn, buffer)
+
+	accept := s.generateAcceptHeader(r.Header.Get("Sec-Websocket-Key"))
+
 	defer conn.Close()
 }

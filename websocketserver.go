@@ -15,10 +15,16 @@ func NewWebSocketServer(config Config) *WebSocketServer {
 
 // ServeHTTP ensures that WebSocketServer fulfills the http.Handler interface.
 func (s *WebSocketServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	return s.upgradeConnection(w, r)
+	s.upgradeConnection(w, r)
+	return
 }
 
 // upgradeConnection attempts to upgrade an incoming HTTP request to the WebSocket protocol.
 func (s *WebSocketServer) upgradeConnection(w http.ResponseWriter, r *http.Request) {
 
+	// The WebSocket handshake is only supported by HTTP/1.1 or greater.
+	if !r.ProtoAtLeast(1, 1) {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
 }

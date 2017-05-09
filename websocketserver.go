@@ -43,12 +43,21 @@ func (s *WebSocketServer) upgradeConnection(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-  url, _ := url.Parse(origin)
+	url, _ := url.Parse(origin)
 
-  // Requests for a WebSocket protocol upgrade should probably be disregarded
-  // if they come from a different host.
-  if !(s.config.AllowCrossOrigin == true || r.Host == r.Host) {
-    http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
-    return
-  }
+	// Requests for a WebSocket protocol upgrade should probably be disregarded
+	// if they come from a different host.
+	if !(s.config.AllowCrossOrigin == true || r.Host == r.Host) {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
+
+	connectionHeaders := strings.Split(r.Header.Get("Connection"), ", ")
+
+	// Firefox sends keep-alive with the Connection header, so it's necessary to
+	// check everything in the Connection headers to make sure Upgrade is included.
+	if !sliceContainsString(connectionHeaders, "Upgrade") {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
 }

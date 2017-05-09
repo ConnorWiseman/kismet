@@ -30,16 +30,25 @@ func (s *WebSocketServer) upgradeConnection(w http.ResponseWriter, r *http.Reque
 	}
 
 	// The WebSocket handshake is only supported via GET.
-	if req.Method != http.MethodGet {
-		http.Error(res, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+	if r.Method != http.MethodGet {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
-	origin := req.Header.Get("Origin")
+	origin := r.Header.Get("Origin")
 
 	// Requests without an Origin header should be denied.
 	if origin == "" {
-		http.Error(res, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
+
+  url, _ := url.Parse(origin)
+
+  // Requests for a WebSocket protocol upgrade should probably be disregarded
+  // if they come from a different host.
+  if !(s.config.AllowCrossOrigin == true || r.Host == r.Host) {
+    http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+    return
+  }
 }

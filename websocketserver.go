@@ -59,11 +59,11 @@ func (s *WebSocketServer) upgradeConnection(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	url, _ := url.Parse(origin)
+	requestURL, _ := url.Parse(origin)
 
 	// Requests for a WebSocket protocol upgrade should probably be disregarded
 	// if they come from a different host.
-	if !(s.config.AllowCrossOrigin == true || r.Host == r.Host) {
+	if !(s.config.AllowCrossOrigin == true || requestURL.Host == r.Host) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}

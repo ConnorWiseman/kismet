@@ -3,6 +3,7 @@ package kismet
 import (
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 type WebSocketServer struct {
@@ -61,11 +62,11 @@ func (s *WebSocketServer) upgradeConnection(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-  conn, buffer, err := w.(http.Hijacker).Hijack()
-  if err != nil {
-    http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-    return
-  }
+	conn, buffer, err := w.(http.Hijacker).Hijack()
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
 
-  defer conn.Close()
+	defer conn.Close()
 }

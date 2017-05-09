@@ -33,4 +33,12 @@ func (s *WebSocketServer) upgradeConnection(w http.ResponseWriter, r *http.Reque
 		http.Error(res, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
+
+	origin := req.Header.Get("Origin")
+
+	// Requests without an Origin header should be denied.
+	if origin == "" {
+		http.Error(res, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 }

@@ -5,11 +5,12 @@ import (
 )
 
 type WebSocketServer struct {
+  config Config
 }
 
 // NewWebSocketServer returns a new WebSocketServer.
-func NewWebSocketServer() *WebSocketServer {
-	return &WebSocketServer{}
+func NewWebSocketServer(config Config) *WebSocketServer {
+	return &WebSocketServer{config}
 }
 
 // ServeHTTP ensures that WebSocketServer fulfills the http.Handler interface.

@@ -6,12 +6,12 @@ import (
 )
 
 type WebSocket struct {
-	conn   *net.Conn
+	conn   net.Conn
 	buffer *bufio.ReadWriter
 }
 
 // NewWebSocket returns a new WebSocket.
-func NewWebSocket(conn *net.Conn, buffer *bufio.ReadWriter) *WebSocket {
+func NewWebSocket(conn net.Conn, buffer *bufio.ReadWriter) *WebSocket {
 	return &WebSocket{conn, buffer}
 }
 

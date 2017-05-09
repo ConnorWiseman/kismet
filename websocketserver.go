@@ -84,7 +84,7 @@ func (s *WebSocketServer) upgradeConnection(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	socket := NewWebSocket(&conn, buffer)
+	socket := NewWebSocket(conn, buffer)
 	accept := s.generateAcceptHeader(r.Header.Get("Sec-Websocket-Key"))
 
 	socket.buffer.WriteString("HTTP/1.1 101 Switching Protocols\r\n")

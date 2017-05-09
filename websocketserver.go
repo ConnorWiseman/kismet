@@ -1,5 +1,9 @@
 package kismet
 
+import (
+  "net/http"
+)
+
 type WebSocketServer struct {
 }
 

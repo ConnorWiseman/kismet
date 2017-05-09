@@ -2,6 +2,7 @@ package kismet
 
 import (
 	"net/http"
+	"net/url"
 )
 
 type WebSocketServer struct {
